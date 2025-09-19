@@ -1,0 +1,7 @@
+config:
+  azure-native:location: NorthEurope
+  tutorial_vm_02:adminUsername: admin
+  tutorial_vm_02:osImage: Debian:debian-11:11:latest
+  tutorial_vm_02:servicePort: "80"
+  tutorial_vm_02:vmName: my-server
+  tutorial_vm_02:vmSize: Standard_A1_v2
