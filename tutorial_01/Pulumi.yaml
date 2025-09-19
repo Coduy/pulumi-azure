@@ -1,0 +1,10 @@
+name: tutorial_01
+description: simple fun with ts and pulumi
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: azure-typescript
