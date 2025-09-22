@@ -1,4 +1,6 @@
 config:
+  azure-native:subscriptionId: "b0e48ac0-ae9a-4d7e-b20c-b32098a4a9e1"
+  azure-native:tenantId: "1dbd7074-2fe5-413c-8846-177e2d63bef5"
   azure-native:location: NorthEurope
   tutorial_vm_02:adminUsername: admin
   tutorial_vm_02:osImage: Debian:debian-11:11:latest
