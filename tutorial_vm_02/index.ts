@@ -4,6 +4,7 @@ import * as network from "@pulumi/azure-native/network";
 import * as compute from "@pulumi/azure-native/compute";
 import * as random from "@pulumi/random";
 import * as tls from "@pulumi/tls";
+import * as fs from "fs";
 
 // Import the program's configuration settings
 const config = new pulumi.Config();
@@ -48,11 +49,16 @@ var domainNameLabel = new random.RandomString("domain-label", {
 // Create a public IP address for the VM
 const publicIp = new network.PublicIPAddress("public-ip", {
     resourceGroupName: resourceGroup.name,
-    publicIPAllocationMethod: network.IPAllocationMethod.Dynamic,
+    publicIPAllocationMethod: network.IPAllocationMethod.Static,
+    sku: {
+        name: network.PublicIPAddressSkuName.Standard,
+        tier: network.PublicIPAddressSkuTier.Regional,
+    },
     dnsSettings: {
         domainNameLabel: domainNameLabel,
     },
 });
+
 
 // Create a security group allowing inbound access over ports 80 (for HTTP) and 22 (for SSH)
 const securityGroup = new network.NetworkSecurityGroup("security-group", {
@@ -158,8 +164,15 @@ const vmAddress = vm.id.apply(_ => network.getPublicIPAddressOutput({
     publicIpAddressName: publicIp.name,
 }));
 
+
 // Export the VM's hostname, public IP address, HTTP URL, and SSH private key
 export const ip = vmAddress.ipAddress;
 export const hostname = vmAddress.dnsSettings?.apply(settings => settings?.fqdn);
 export const url = hostname?.apply(name => `http://${name}:${servicePort}`);
 export const privatekey = sshKey.privateKeyOpenssh;
+
+// export ssh private key to file
+privatekey.apply(key => {
+    fs.writeFileSync("id_rsa", key, { mode: 0o600 });
+});
+
