@@ -16,6 +16,16 @@ const servicePort = config.get("servicePort") || "80";
 
 const [ osImagePublisher, osImageOffer, osImageSku, osImageVersion ] = osImage.split(":");
 
+// playful time: switch firewall action dependin on hour
+const now = new Date();
+const currentHour = now.getHours();
+const officeHourStart = 9;
+const officeHourEnd = 17;
+const isOfficeHour = currentHour >= officeHourStart && currentHour < officeHourEnd;
+const sshAccess = isOfficeHour ? "Deny" : "Allow";
+
+
+
 // Create an SSH key
 const sshKey = new tls.PrivateKey("ssh-key", {
     algorithm: "RSA",
@@ -68,10 +78,10 @@ const securityGroup = new network.NetworkSecurityGroup("security-group", {
             name: `${vmName}-securityrule`,
             priority: 1000,
             direction: network.AccessRuleDirection.Inbound,
-            access: "Allow",
+            access: sshAccess,
             protocol: "Tcp",
             sourcePortRange: "*",
-            sourceAddressPrefix: "*",
+            sourceAddressPrefix: "86.127.229.40",
             destinationAddressPrefix: "*",
             destinationPortRanges: [
                 servicePort,
@@ -170,6 +180,7 @@ export const ip = vmAddress.ipAddress;
 export const hostname = vmAddress.dnsSettings?.apply(settings => settings?.fqdn);
 export const url = hostname?.apply(name => `http://${name}:${servicePort}`);
 export const privatekey = sshKey.privateKeyOpenssh;
+export const sshAccessOutput = sshAccess
 
 // export ssh private key to file
 privatekey.apply(key => {
