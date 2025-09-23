@@ -1,0 +1,21 @@
+stages:
+  - preview
+  - deploy
+
+image: node:20
+
+variables:
+  PULUMI_ACCESS_TOKEN: $PULUMI_ACCESS_TOKEN
+
+cache: 
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+before_script:
+  - curl -fsSL https://get.pulumi.com | sh
+  - export PATH=$PATH:$HOME/.pulumi/bin
+  - npm ci
+
+  TBC Carry on here
+    
