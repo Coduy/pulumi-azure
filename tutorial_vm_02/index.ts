@@ -22,7 +22,7 @@ const currentHour = now.getHours();
 const officeHourStart = 9;
 const officeHourEnd = 17;
 const isOfficeHour = currentHour >= officeHourStart && currentHour < officeHourEnd;
-const sshAccess = isOfficeHour ? "Deny" : "Allow";
+const sshAccess = isOfficeHour ? "Allow" : "Deny";
 
 
 
